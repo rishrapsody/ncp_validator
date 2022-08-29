@@ -99,11 +99,6 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
 ## function to get arvpn server hostname for each arvpnID. Returns nexus to server hostname mapping
 def find_arvpn_server(arvpn_dict: Dict) -> Dict:
     try:
-        # df = pd.read_csv("data/arvpn.csv")
-        # temp_dict = {}
-        # for k,v in arvpn_dict.items():
-        #     temp_dict[k] = df.loc[df["Id"] == v,'Name'].item()
-        # return(temp_dict)
         temp_dict = {}
         for k,v in arvpn_dict.items():
             headers = {'Content-Type': 'application/json'}
@@ -528,9 +523,6 @@ def main_starts_here() -> None:
                 "conn_timeout" : 100,
             }
 
-            #if device['key_file'] == "<provide path to your private key>" or device['key_file'] == "":
-            #    exit("Your private key is not present. Please update and retry. Thanks!!")
-
 
             try:
                 with ConnectHandler(**device) as net_connect:
@@ -612,8 +604,6 @@ def main_starts_here() -> None:
 if __name__ == "__main__":
     try:
         init()
-        #R = "\033[0;31;40m"
-        #N = '\033[0m'
         
         try:
             user_data.key_file
@@ -631,7 +621,7 @@ if __name__ == "__main__":
             current = repo.head.commit
             repo.remotes.origin.pull()
             if current != repo.head.commit:
-                exit("Your script has been auto-updated. Check Confluence for new added updates. You can re-run the script to run validation!!")
+                exit("Your script has been auto-updated. Check Confluence for new added updates.\nYou can re-run the script to run validation!!\n")
         except Exception as e:
             print(e)
             exit("Error in pulling repo from remote origin.\n Have you modified the file locally? or moved script to different path?\nIf yes, please delete folder and re-do steps mentioned in confluence")
