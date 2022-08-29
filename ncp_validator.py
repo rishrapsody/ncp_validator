@@ -516,8 +516,6 @@ def main_starts_here() -> None:
                 "device_type": "linux",
                 "host": arvpn_server,
                 "use_keys": True,
-            #    "key_file" : "<provide path to your private key>",
-            #    "ssh_config_file" : "$HOME/.ssh/config",
                 "key_file" : user_data.key_file,
                 "ssh_config_file": user_data.ssh_config_file,
                 "conn_timeout" : 100,
@@ -614,6 +612,11 @@ if __name__ == "__main__":
             user_data.ssh_config_file
         except AttributeError:
             exit("ssh_config_file variable for proxy path is required in user_data.\nDefault Path is:$HOME/.ssh/config. Please Check!!!")
+        
+        try:
+            user_data.ee_url
+        except AttributeError:
+            exit("ee_url variable is required.Please Check confluence for setup proecudure and update!!\n")
 
     ## checking remote repo for updates
         try:
