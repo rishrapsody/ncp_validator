@@ -288,19 +288,19 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
 
             try:
                 if dg["SEM1"] != "212.59.89.1":
-                    dg_data.append(["DomainGroup","SEM1",dg["SEM1"],"212.59.89.1",Fore.RED+"FAILED"+Fore.RESET])
+                    dg_data.append(["DomainGroup","MgmtServer1",dg["SEM1"],"212.59.89.1",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    dg_data.append(["DomainGroup", "SEM1", dg["SEM1"], "212.59.89.1", "PASSED"])
+                    dg_data.append(["DomainGroup", "MgmtServer1", dg["SEM1"], "212.59.89.1", "PASSED"])
             except Exception as e:
-                dg_data.append(["DomainGroup","SEM1","Not Configured","212.59.89.1",Fore.RED+"FAILED"+Fore.RESET])
+                dg_data.append(["DomainGroup","MgmtServer1","Not Configured","212.59.89.1",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if dg["SEM2"] != "212.59.89.17":
-                    dg_data.append(["DomainGroup", "SEM2", dg["SEM2"], "212.59.89.17", Fore.RED+"FAILED"+Fore.RESET])
+                    dg_data.append(["DomainGroup", "MgmtServer2", dg["SEM2"], "212.59.89.17", Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    dg_data.append(["DomainGroup", "SEM2", dg["SEM2"], "212.59.89.17", "PASSED"])
+                    dg_data.append(["DomainGroup", "MgmtServer2", dg["SEM2"], "212.59.89.17", "PASSED"])
             except Exception as e:
-                dg_data.append(["DomainGroup", "SEM2", "Not Configured", "212.59.89.17", Fore.RED+"FAILED"+Fore.RESET])
+                dg_data.append(["DomainGroup", "MgmtServer2", "Not Configured", "212.59.89.17", Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if dg["IKev2Auth"] != "EAP":
