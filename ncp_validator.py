@@ -640,6 +640,7 @@ if __name__ == "__main__":
     #call main function
         main_starts_here()
 
+    #check if user wants to run again
         try:
             run_again = str(input("\nWant to run again for different nexus?(y/n):")).lower()
             if run_again.startswith('y') or run_again == 'ok':
