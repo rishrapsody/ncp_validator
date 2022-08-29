@@ -32,5 +32,5 @@ zope.interface==5.4.0
 ipaddress==1.0.22
 typing
 typing_extensions
-git
+GitPython
 
