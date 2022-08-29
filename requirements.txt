@@ -32,4 +32,4 @@ zope.interface==5.4.0
 ipaddress==1.0.22
 typing==3.10.0.0
 typing_extensions==4.3.0
-colorama== 0.4.3
+
