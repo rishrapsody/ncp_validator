@@ -1,3 +1,3 @@
 key_file = ""
-ssh_config_file = "$HOME/.ssh/config"
+ssh_config_file = "~/.ssh/config"
 ee_url = ""
