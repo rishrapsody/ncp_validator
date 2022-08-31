@@ -628,6 +628,9 @@ if __name__ == "__main__":
             repo.remotes.origin.pull()
             if current != repo.head.commit:
                 exit("Your script has been auto-updated. Check Confluence for new added updates.\nYou can re-run the script to run validation!!\n")
+        except git.exc.GitCommandError as error:
+            print("Error pulling updated remote file: {}".format(error))
+            exit("Error in pulling repo from remote origin.\n Have you modified the file locally? or moved script to different path?\nIf yes, please delete folder and re-do steps mentioned in confluence")
         except Exception as e:
             print(e)
             exit("Error in pulling repo from remote origin.\n Have you modified the file locally? or moved script to different path?\nIf yes, please delete folder and re-do steps mentioned in confluence")
