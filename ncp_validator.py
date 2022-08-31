@@ -27,7 +27,7 @@ Invalid:
 1. Enter PrivateAccess nxID(separated by commas)[eg.4042106,3150376] :->> 3150376, ABC
 2. Enter PrivateAccess nxID(separated by commas)[eg.4042106,3150376] :->> 3150376XYZ
 
-Default path for Proxy file: $HOME/.ssh/config (update ssh_config_file variable if its different for you)
+Default path for Proxy file: ~/.ssh/config (update ssh_config_file variable if its different for you)
 ''',formatter_class=argparse.RawTextHelpFormatter)
 
 args = parser.parse_args()
