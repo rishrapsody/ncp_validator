@@ -604,17 +604,17 @@ if __name__ == "__main__":
         init()
         
         try:
-            user_data.key_file
+            if user_data.key_file != "":
         except AttributeError:
             exit("key_file variable for private key is required in user_data. Please Check!!!")
 
         try:
-            user_data.ssh_config_file
+            if user_data.ssh_config_file != "":
         except AttributeError:
             exit("ssh_config_file variable for proxy path is required in user_data.\nDefault Path is:$HOME/.ssh/config. Please Check!!!")
         
         try:
-            user_data.ee_url
+            if user_data.ee_url != "":
         except AttributeError:
             exit("ee_url variable is required.Please Check confluence for setup proecudure and update!!\n")
 
