@@ -583,13 +583,13 @@ def main_starts_here() -> None:
         if len(errors_list) == 0:
             writer.writerow(["No additional errors"])
             print("No additional errors")
-            print("NOTE: This tool cannot validate PSK since its saved in cryptic format")
+            print("NOTE: This tool cannot validate PSK since its saved in encrypted format")
             print("NOTE: This tool cannot validate client config since its stored in db and not cannot be parsed")
         else:
             for error in errors_list:
                 print(error)
                 writer.writerow(error)
-            print("NOTE: This tool cannot validate PSK since its saved in cryptic format")
+            print("NOTE: This tool cannot validate PSK since its saved in encrypted format")
             print("NOTE: This tool cannot validate client config since its stored in db and not cannot be parsed")
         f.close()
 
