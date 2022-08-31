@@ -33,6 +33,7 @@ Default path for Proxy file: $HOME/.ssh/config (update ssh_config_file variable 
 args = parser.parse_args()
 
 
+
 ## function to get user input and save as a list
 def get_user_input() -> List:
     try:
