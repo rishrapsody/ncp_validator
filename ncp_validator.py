@@ -259,7 +259,7 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
             try:
                 name = re.search(r"^([a-z]+)-([0-9]{1,4})-([a-z]+)-([a-z]+)-([0-9]{1,2})-([a-z]+)$",dg["Name"])
                 if name.group(1) == cust_code[nexus] and name.group(2) == cust_id[nexus] and name.group(3) == "domain" and name.group(4) == "group" and name.group(5) in range(1,99): 
-                    if name.group(6) == "mlc" or if name.group(6) == "row":
+                    if name.group(6) == "mlc" or name.group(6) == "row":
                         dg_data.append(["DomainGroup", "Name", dg["Name"], "Standard says custcode-custid-domain-group-num-mlc|row", "PASSED"])
                     else:
                        dg_data.append(["DomainGroup","Name",dg["Name"],"Standard says custcode-custid-domain-group-num-mlc|row",Fore.RED+"FAILED"+Fore.RESET])
