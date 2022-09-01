@@ -387,19 +387,19 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
                         if not isinstance(dg["IPPools"]["IPPool"],list):
                             for subnet in local_subnet[nexus]:
                                 if ipaddress.ip_address(dg["IPPools"]["IPPool"]["PoolBegin"]) in ipaddress.ip_network(subnet) and ipaddress.ip_address(dg["IPPools"]["IPPool"]["PoolEnd"]) in ipaddress.ip_network(subnet):
-                                    dg_data.append(["Network Test","IPPool","IPs are part of ANMC subnet "+ subnet,"IPs should be part of ANMC subnet","PASSED"])
+                                    dg_data.append(["Network Test","IPPool","IPs belong to ANMC subnet "+ subnet,"IPs should be part of ANMC subnet","PASSED"])
                                     flag = 1
                             if flag == 0:
-                                dg_data.append(["Network Test","IPPool","IPs are not part of ANMC subnet "+ subnet,"IPs shoudl be part of ANMC subnet",Fore.RED+"FAILED"+Fore.RESET])
+                                dg_data.append(["Network Test","IPPool","IPs belong to ANMC subnet "+ subnet,"IPs should be part of ANMC subnet",Fore.RED+"FAILED"+Fore.RESET])
                         else:
                             for i in range(len(dg["IPPools"]["IPPool"])):
                                 flag = 0
                                 for subnet in local_subnet[nexus]:
                                     if ipaddress.ip_address(dg["IPPools"]["IPPool"][i]["PoolBegin"]) in ipaddress.ip_network(subnet) and ipaddress.ip_address(dg["IPPools"]["IPPool"][i]["PoolEnd"]) in ipaddress.ip_network(subnet):
-                                        dg_data.append(["Network Test","IPPool","Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs are part of ANMC subnet "+ subnet,"Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs should be part of ANMC subnet","PASSED"])
+                                        dg_data.append(["Network Test","IPPool","Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs belong to ANMC subnet "+ subnet,"Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs should be part of ANMC subnet","PASSED"])
                                         flag = 1
                                 if flag == 0:
-                                    dg_data.append(["Network Test","IPPool","Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs are not part of ANMC subnet "+ subnet,"Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs shoudl be part of ANMC subnet",Fore.RED+"FAILED"+Fore.RESET])
+                                    dg_data.append(["Network Test","IPPool","Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs belong to ANMC subnet "+ subnet,"Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs should be part of ANMC subnet",Fore.RED+"FAILED"+Fore.RESET])
 
             except Exception as e:
                 #print(e)
