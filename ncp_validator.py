@@ -266,7 +266,7 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
                 else:
                     dg_data.append(["DomainGroup","Name",dg["Name"],"Standard says custcode-custid-domain-group-num-mlc|row",Fore.RED+"FAILED"+Fore.RESET])
             except Exception as e:
-                dg_data.append(["DomainGroup", "Name", "Not Matching Standard convention", "Standard says custcode-custid-domain-group-num-mlc|row", Fore.RED+"FAILED"+Fore.RESET])
+                dg_data.append(["DomainGroup", "Name", dg["Name"], "Standard: custcode-custid-domain-group-num-mlc|row", Fore.RED+"FAILED"+Fore.RESET])
 
 
             try:
