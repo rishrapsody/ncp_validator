@@ -258,35 +258,12 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
             
             try:
                 name = re.search(r"^([a-z]+)-([0-9]{1,4})-([a-z]+)-([a-z]+)-([0-9]{1,2})-([a-z]+)$",dg["Name"])
-                print("before check")
-                print(name.group(1))
-                print(type(name.group(1)))
-                print(name.group(2))
-                print(type(name.group(2)))
-                print(name.group(3))
-                print(type(name.group(3)))
-                print(name.group(5))
-                print(type(name.group(5)))
-                print(name.group(6))
-                print(type(name.group(6)))
                 if name.group(1) == cust_code[nexus] and int(name.group(2)) == cust_id[nexus] and name.group(3) == "domain" and name.group(4) == "group" and int(name.group(5)) in range(1,99): 
                     if name.group(6) == "mlc" or name.group(6) == "row":
-                        print("inner most yes")
-                        print(name.group(1))
-                        print(type(name.group(1)))
-                        print(name.group(2))
-                        print(type(name.group(2)))
-                        print(name.group(3))
-                        print(type(name.group(3)))
-                        print(name.group(5))
-                        print(type(name.group(5)))
-                        print(name.group(6))
-                        print(type(name.group(6)))
                         dg_data.append(["DomainGroup", "Name", dg["Name"], "Standard:custcode-custid-domain-group-num-mlc|row", "PASSED"])
                     else:
                        dg_data.append(["DomainGroup","Name",dg["Name"],"Standard:custcode-custid-domain-group-num-mlc|row",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    print("exit first")
                     dg_data.append(["DomainGroup","Name",dg["Name"],"Standard:custcode-custid-domain-group-num-mlc|row",Fore.RED+"FAILED"+Fore.RESET])
             except Exception as e:
                 dg_data.append(["DomainGroup", "Name", dg["Name"], "Standard:custcode-custid-domain-group-num-mlc|row", Fore.RED+"FAILED"+Fore.RESET])
