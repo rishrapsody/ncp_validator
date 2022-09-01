@@ -415,6 +415,8 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
                                         flag = 1
                                 if flag == 0:
                                     dg_data.append(["Network Test","IPPool","Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs belong to ANMC subnet "+ subnet,"Pool "+dg["IPPools"]["IPPool"][i]["PoolNr"]+" IPs should be part of ANMC subnet",Fore.RED+"FAILED"+Fore.RESET])
+                    else:
+                        dg_data.append(["Network Test","IPPool","ANMC subnet not configured","IPs should be part of ANMC subnet",Fore.RED+"FAILED"+Fore.RESET])
 
             except Exception as e:
                 #print(e)
