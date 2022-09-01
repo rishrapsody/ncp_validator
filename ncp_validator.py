@@ -269,7 +269,7 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
                 print(type(name.group(5)))
                 print(name.group(6))
                 print(type(name.group(6)))
-                if name.group(1) == cust_code[nexus] and name.group(2) == cust_id[nexus] and name.group(3) == "domain" and name.group(4) == "group" and name.group(5) in range(1,99): 
+                if name.group(1) == cust_code[nexus] and int(name.group(2)) == cust_id[nexus] and name.group(3) == "domain" and name.group(4) == "group" and int(name.group(5)) in range(1,99): 
                     if name.group(6) == "mlc" or name.group(6) == "row":
                         print("inner most yes")
                         print(name.group(1))
