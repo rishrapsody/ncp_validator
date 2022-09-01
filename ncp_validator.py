@@ -13,6 +13,7 @@ from datetime import datetime
 from colorama import init, Fore, Back, Style
 from typing import List,Dict,Union
 import ipaddress
+import re
 import urllib3
 urllib3.disable_warnings()
 
@@ -239,20 +240,34 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
     return(lp_data)
 
 ## function to parse domain groups and validate config
-def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunnel_info: Dict,local_subnet: Dict) -> List:
+def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunnel_info: Dict,local_subnet: Dict,cust_id: Dict) -> List:
     dg_data = []
     for dg in groups:
         if not cust_code[nexus] in dg["Name"]:
             pass
         else:
             #pprint(dg)
+            # try:
+            #     if not dg["Name"].startswith(cust_code[nexus]) and not dg["Name"].endswith("row") or not dg["Name"].startswith(cust_code[nexus]) and not dg["Name"].endswith("mlc"):
+            #         dg_data.append(["DomainGroup","Name",dg["Name"],"Start with custcode and end with region",Fore.RED+"FAILED"+Fore.RESET])
+            #     else:
+            #         dg_data.append(["DomainGroup", "Name", dg["Name"], "Start with custcode and end with region", "PASSED"])
+            # except Exception as e:
+            #     dg_data.append(["DomainGroup", "Name", "Not Configured", "Start with custcode and end with region", Fore.RED+"FAILED"+Fore.RESET])
+
+            
             try:
-                if not dg["Name"].startswith(cust_code[nexus]) and not dg["Name"].endswith("row") or not dg["Name"].startswith(cust_code[nexus]) and not dg["Name"].endswith("mlc"):
-                    dg_data.append(["DomainGroup","Name",dg["Name"],"Start with custcode and end with region",Fore.RED+"FAILED"+Fore.RESET])
+                name = re.search(r"^([a-z]+)-([0-9]{1,4})-([a-z]+)-([a-z]+)-([0-9]{1,2})-([a-z]+)$",dg["Name"])
+                if name.group(1) == cust_code[nexus] and name.group(2) == cust_id[nexus] and name.group(3) == "domain" and name.group(4) == "group" and name.group(5) in range(1,99): 
+                    if name.group(6) == "mlc" or if name.group(6) == "row":
+                        dg_data.append(["DomainGroup", "Name", dg["Name"], "Standard says custcode-custid-domain-group-num-mlc|row", "PASSED"])
+                    else:
+                       dg_data.append(["DomainGroup","Name",dg["Name"],"Standard says custcode-custid-domain-group-num-mlc|row",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    dg_data.append(["DomainGroup", "Name", dg["Name"], "Start with custcode and end with region", "PASSED"])
+                    dg_data.append(["DomainGroup","Name",dg["Name"],"Standard says custcode-custid-domain-group-num-mlc|row",Fore.RED+"FAILED"+Fore.RESET])
             except Exception as e:
-                dg_data.append(["DomainGroup", "Name", "Not Configured", "Start with custcode and end with region", Fore.RED+"FAILED"+Fore.RESET])
+                dg_data.append(["DomainGroup", "Name", "Not Matching Standard convention", "Standard says custcode-custid-domain-group-num-mlc|row", Fore.RED+"FAILED"+Fore.RESET])
+
 
             try:
                 if "State" in dg.keys():
@@ -433,11 +448,11 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
 
             try:
                 if not dg["VpnEndpoint"] or pop not in dg["VpnEndpoint"] or str(nexus) not in dg["VpnEndpoint"]:
-                    dg_data.append(["DomainGroup","VpnEndpoint",dg["VpnEndpoint"],"VpnEndpoint should have same pop LinkProfile",Fore.RED+"FAILED"+Fore.RESET])
+                    dg_data.append(["DomainGroup","Map LinkProfile",dg["VpnEndpoint"],"VpnEndpoint should have same pop LinkProfile",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    dg_data.append(["DomainGroup", "VpnEndpoint", dg["VpnEndpoint"], "VpnEndpoint should have same pop LinkProfile","PASSED"])
+                    dg_data.append(["DomainGroup", "Map LinkProfile", dg["VpnEndpoint"], "VpnEndpoint should have same pop LinkProfile","PASSED"])
             except Exception as e:
-                dg_data.append(["DomainGroup","VpnEndpoint","Not Configured","VpnEndpoint should have same pop LinkProfile",Fore.RED+"FAILED"+Fore.RESET])
+                dg_data.append(["DomainGroup","Map LinkProfile","Not Configured","VpnEndpoint should have same pop LinkProfile",Fore.RED+"FAILED"+Fore.RESET])
 
     return(dg_data)
 
