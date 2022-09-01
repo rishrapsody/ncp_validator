@@ -209,7 +209,7 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                 else:
                     lp_data.append(["LinkProfile", "IkePolicy", lp["IkePolicy"], "ike-policy-asn-default", "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","IkePolicy","Not Configured","ike-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","IkePolicy","Not Set or Configured at Template","ike-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if "asn" not in lp["IPSecPolicy"]:
@@ -217,7 +217,7 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                 else:
                     lp_data.append(["LinkProfile", "IPSecPolicy", lp["IPSecPolicy"], "ipsec-policy-asn-default", "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","IPSecPolicy","Not Configured","ipsec-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","IPSecPolicy","Not Set or Configured at Template","ipsec-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if lp["PrivateIpAddress"] != "255.255.255.255":
