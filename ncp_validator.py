@@ -520,6 +520,7 @@ def main_starts_here() -> None:
                 "key_file" : user_data.key_file,
                 "ssh_config_file": user_data.ssh_config_file,
                 "conn_timeout" : 100,
+                "banner_timeout" : 50,
             }
 
 
