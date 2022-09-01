@@ -558,7 +558,7 @@ def main_starts_here() -> None:
                         # get domain-groups and scrub data
                         try:
                             #print("Fetching and validating Domain Group for nexus {}".format(nexus))
-                            domain_groups = validate_domain_group(out_dict["ServerConfiguration"]["DomainGroups"]["DomainGroup"], nexus,pop,cust_code,tunnel_info,local_subnet)
+                            domain_groups = validate_domain_group(out_dict["ServerConfiguration"]["DomainGroups"]["DomainGroup"], nexus,pop,cust_code,tunnel_info,local_subnet,cust_id)
                         except Exception as e:
                             print(e)
                             errors_list.append("unable to find matching Domain Groups on server {} for nexus {}".format(arvpn_server, nexus))
