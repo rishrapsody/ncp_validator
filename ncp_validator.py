@@ -44,12 +44,12 @@ def get_user_input() -> List:
 
     except ValueError as e:
         print(e)
-        print("Invalid user inputs. Please try again")
-        get_user_input()
+        exit("Invalid user inputs. Please try again")
+    #    get_user_input()
     except Exception as e:
         print(e)
-        print("Re-check input")
-        get_user_input()
+        exit("Re-check input")
+     #   get_user_input()
 
 ## function to get arvpnID, custcode, custid, localsubnet for each nexus in input list
 def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
