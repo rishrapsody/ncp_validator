@@ -159,11 +159,11 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
             try:
                 exp_name = "{}-{}-{}".format(cust_code[nexus],pop,nexus)
                 if not exp_name == lp["Name"]:
-                    lp_data.append(["LinkProfile","Name",lp["Name"],"Should follow standard i.e.cust_code-pop-nexus",Fore.RED+"FAILED"+Fore.RESET])
+                    lp_data.append(["LinkProfile","Name",lp["Name"],"custcode-pop-nexus",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    lp_data.append(["LinkProfile", "Name", lp["Name"], "Should follow standard i.e.cust_code-pop-nexus", "PASSED"])
+                    lp_data.append(["LinkProfile", "Name", lp["Name"], "custcode-pop-nexus", "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","Name","NA","Should follow standard i.e.cust_code-pop-nexus",Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","Name","NA","custcode-pop-nexus",Fore.RED+"FAILED"+Fore.RESET])
             try:
                 if lp["Direction"] != 'bidirectional':
                     lp_data.append(["LinkProfile","Direction",lp['Direction'],"bidirectional",Fore.RED+"FAILED"+Fore.RESET])
