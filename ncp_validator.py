@@ -644,7 +644,7 @@ if __name__ == "__main__":
             exit("ee_url variable is required.\nPlease follow installation steps mentioned in Confluence!!\n")
 
     ## checking remote repo for updates
-    print("Asking remote git if we need a code update....")
+        print("Asking remote git if we need a code update....")
         try:
             repo = git.Repo('.')
             current = repo.head.commit
