@@ -62,7 +62,7 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
         site_name = {}
         for nx_id in input:
             url = "{}/eagleeye/api/nexus/{}/info?nexus_id".format(user_data.ee_url,nx_id)
-            response = requests.request("GET", url, headers=headers,verify=False).json()
+            response = requests.request("GET", url, headers=headers,verify=False,timeout=5).json()
             if response.get('arvpn_machine_id') !=  None and response['arvpn_machine_id'] != 0:
                 arvpn[nx_id] = response["arvpn_machine_id"]
                 temp = []
@@ -108,7 +108,7 @@ def find_arvpn_server(arvpn_dict: Dict) -> Dict:
             headers = {'Content-Type': 'application/json'}
             url = "{}/eagleeye/command/run".format(user_data.ee_url)
             payload = json.dumps({"commandName":"uname -a","entityType":"mach","entityId":[v],"roles":["arvpn"],"blocking":"true"})
-            response = requests.request("GET", url, headers=headers, data=payload,verify=False).json()
+            response = requests.request("GET", url, headers=headers, data=payload,verify=False,timeout=5).json()
             temp_dict[k] = response["batch"]["exec"][0]["hostName"]
         return(temp_dict)
     except requests.exceptions.ConnectionError:
@@ -130,7 +130,7 @@ def get_vpn_tunnel_status(input: List,cust_id: Dict) -> Dict:
         headers = {'Content-Type': 'application/json'}
         for nx_id in input:
             url = "{}/eagleeye/api/customer/{}/nexus/down".format(user_data.ee_url,cust_id[nx_id])
-            response = requests.request("GET", url, headers=headers,verify=False).json()
+            response = requests.request("GET", url, headers=headers,verify=False,timeout=5).json()
             if nx_id in response["nexusIds"]:
                 tunnel_info[nx_id] = Fore.RED+"DOWN"+Fore.RESET
             else:
@@ -473,7 +473,7 @@ def report_admin(func,err="err",err_list):
             "err_list" : err_list,
             "user" : user
         })
-        response = requests.request("POST", url, headers=headers,verify=False,data=payload)
+        response = requests.request("POST", url, headers=headers,verify=False,data=payload,timeout=5)
     except Exception as e:
         print(e)
         exit(1)
@@ -624,11 +624,12 @@ if __name__ == "__main__":
     try:
         init()
         
+        print("Validating if USER_DATA.PY file is up-to-date....")
         try:
             if not user_data.key_file != "":
-                exit("key_file variable for private key is required in user_data. Please Check!!!")
+                exit("key_file variable for private key is required in user_data. Please follow Installation steps!!!")
         except AttributeError:
-            exit("key_file variable for private key is required in user_data. Please Check!!!")
+            exit("key_file variable for private key is required in user_data. Please follow Installation steps!!!")
 
         try:
             if not user_data.ssh_config_file != "":
@@ -638,11 +639,12 @@ if __name__ == "__main__":
         
         try:
             if not user_data.ee_url != "":
-                exit("ee_url variable is required.\nPlease complete installation steps mentioned in Confluence!!\n")
+                exit("ee_url variable is required.\nPlease follow installation steps mentioned in Confluence!!\n")
         except AttributeError:
-            exit("ee_url variable is required.\nPlease complete installation steps mentioned in Confluence!!\n")
+            exit("ee_url variable is required.\nPlease follow installation steps mentioned in Confluence!!\n")
 
     ## checking remote repo for updates
+    print("Asking remote git if we need a code update....")
         try:
             repo = git.Repo('.')
             current = repo.head.commit
