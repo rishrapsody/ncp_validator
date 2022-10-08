@@ -461,7 +461,7 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
     return(dg_data)
 
 ## function to report errors to Admin
-def report_admin(func,err="err",err_list):
+def report_admin(func="func",err="err",err_list="err_list"):
     try:
         url = 'https://hook.eu1.make.com/b6d397uv8573gmpvac99g9raa7kadapd'
         headers = {'Content-Type': 'application/json'}
