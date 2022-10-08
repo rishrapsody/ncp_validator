@@ -87,7 +87,9 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
             site_name[nx_id] =  response["loc_name"]
         return(arvpn,cust_code,cust_id,local_subnet,site_name)
     except requests.exceptions.ConnectionError:
-        exit("Unable to establish connection with API server. Check if your VPN is UP\n")
+        errors_list.append("Either EE is unresponsive or nexus is not PrivateAccess. Please check")
+        report_admin(func,e,errors_list)
+        exit("Unable to establish connection with EE API server. Check if your VPN is UP and EE is accessible.\nInform Admin if the problem persists for longer time.")
     except requests.exceptions.Timeout as e:
         print ("Timeout Error:",e) 
     except Exception as e:
@@ -459,7 +461,7 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
     return(dg_data)
 
 ## function to report errors to Admin
-def report_admin(func,err,err_list):
+def report_admin(func,err="err",err_list):
     try:
         url = 'https://hook.eu1.make.com/b6d397uv8573gmpvac99g9raa7kadapd'
         headers = {'Content-Type': 'application/json'}
@@ -636,9 +638,9 @@ if __name__ == "__main__":
         
         try:
             if not user_data.ee_url != "":
-                exit("ee_url variable is required.Please Check confluence for setup proecudure and update!!\n")
+                exit("ee_url variable is required.\nPlease complete installation steps mentioned in Confluence!!\n")
         except AttributeError:
-            exit("ee_url variable is required.Please Check confluence for setup proecudure and update!!\n")
+            exit("ee_url variable is required.\nPlease complete installation steps mentioned in Confluence!!\n")
 
     ## checking remote repo for updates
         try:
