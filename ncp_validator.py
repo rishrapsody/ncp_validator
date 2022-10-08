@@ -149,7 +149,7 @@ def get_vpn_tunnel_status(input: List,cust_id: Dict) -> Dict:
 
 
 ## function to parse link profiles and validate config
-def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tunnel_info: Dict) -> List:
+def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tunnel_info: Dict,private_edge_ip:str) -> List:
     #pprint(profiles)
     lp_data = []
     #print(nexus)
@@ -198,13 +198,13 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                 lp_data.append(["LinkProfile", "Timeout", "Not Configured", "0", Fore.RED+"FAILED"+Fore.RESET])
 
             try:
-                if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"]:
-                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnTunnelEndpoint",Fore.RED+"FAILED"+Fore.RESET])
+                if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != private_edge_ip or lp["VpnTunnelEndpoint"] != private_edge_ip:
+                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnTunnelEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
                 else:
                     lp_data.append(["LinkProfile", "RemoteUserId/VpnEndpoint", lp["RemoteUserId"],
                                     "RemoteUserId=VpnTunnelEndpoint", "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnTunnelEndpoint",Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnTunnelEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if "asn" not in lp["IkePolicy"]:
@@ -549,13 +549,17 @@ def main_starts_here() -> None:
                 print("Logging into ARVPN server to read config..")
                 with ConnectHandler(**device) as net_connect:
                     try:
+                        ifconfig_cmd = "ifconfig bond0.16:pri122"
+                        ifconfig_output = task.run(task=netmiko_send_command, command_string=ifconfig_cmd,severity_level=logging.DEBUG)
+                        ifconfig_data = jc.parse('ifconfig',ifconfig_output.result)
+                        private_edge_ip = ifconfig_data[0]['ipv4_addr']
                         output = net_connect.send_command("sudo cat /opt/ncp/ses/etc/cfg/srvlx.conf", read_timeout=10)
                         data = jc.parse('xml', output)
                         out_dict = dict(data)
                         pop = arvpn_server.split(".")[1]
                         try:
                             print("Fetching and validating Link Profile for nexus")
-                            link_profiles = validate_link_profile(out_dict["ServerConfiguration"]["LinkProfiles"]["LinkProfile"], nexus,pop,cust_code,tunnel_info)
+                            link_profiles = validate_link_profile(out_dict["ServerConfiguration"]["LinkProfiles"]["LinkProfile"], nexus,pop,cust_code,tunnel_info,private_edge_ip)
                         except Exception as e:
                             print(e)
                             errors_list.append("unable to find matching Link Profiles on server {} for nexus {}".format(arvpn_server, nexus))
