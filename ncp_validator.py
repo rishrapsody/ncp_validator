@@ -549,9 +549,8 @@ def main_starts_here() -> None:
                 print("Logging into ARVPN server to read config..")
                 with ConnectHandler(**device) as net_connect:
                     try:
-                        ifconfig_cmd = "ifconfig bond0.16:pri122"
-                        ifconfig_output = task.run(task=netmiko_send_command, command_string=ifconfig_cmd,severity_level=logging.DEBUG)
-                        ifconfig_data = jc.parse('ifconfig',ifconfig_output.result)
+                        ifconfig_output = net_connect.send_command("ifconfig bond0.16:pri122")
+                        ifconfig_data = jc.parse('ifconfig',ifconfig_output)
                         private_edge_ip = ifconfig_data[0]['ipv4_addr']
                         output = net_connect.send_command("sudo cat /opt/ncp/ses/etc/cfg/srvlx.conf", read_timeout=10)
                         data = jc.parse('xml', output)
