@@ -199,12 +199,12 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
 
             try:
                 if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != private_edge_ip or lp["VpnTunnelEndpoint"] != private_edge_ip:
-                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnTunnelEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
+                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
                 else:
                     lp_data.append(["LinkProfile", "RemoteUserId/VpnEndpoint", lp["RemoteUserId"],
-                                    "RemoteUserId=VpnTunnelEndpoint", "PASSED"])
+                                    "RemoteUserId=VpnEndpoint", "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnTunnelEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if "asn" not in lp["IkePolicy"]:
@@ -546,7 +546,7 @@ def main_starts_here() -> None:
 
 
             try:
-                print("Logging into ARVPN server to read config..")
+                print("Logging into ARVPN server to read config....")
                 with ConnectHandler(**device) as net_connect:
                     try:
                         ifconfig_output = net_connect.send_command("ifconfig bond0.16:pri122")
