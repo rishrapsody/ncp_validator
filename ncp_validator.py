@@ -494,9 +494,11 @@ def main_starts_here() -> None:
         input = get_user_input()
 
     #get arvpn_id to nexus mapping
+        print("Getting ARVPN details using EE API....")
         arvpn_dict,cust_code,cust_id,local_subnet,site_name = find_arvpnID_mapping(input)
 
     #get vpn tunnel status
+        print("Checking IPSec Tunnel Status using EE API....")
         tunnel_info = get_vpn_tunnel_status(input,cust_id)
 
 
@@ -544,6 +546,7 @@ def main_starts_here() -> None:
 
 
             try:
+                print("Logging into ARVPN server to read config..")
                 with ConnectHandler(**device) as net_connect:
                     try:
                         output = net_connect.send_command("sudo cat /opt/ncp/ses/etc/cfg/srvlx.conf", read_timeout=10)
@@ -551,7 +554,7 @@ def main_starts_here() -> None:
                         out_dict = dict(data)
                         pop = arvpn_server.split(".")[1]
                         try:
-                            #print("\nFetching and validating Link Profile for nexus {}".format(nexus))
+                            print("Fetching and validating Link Profile for nexus")
                             link_profiles = validate_link_profile(out_dict["ServerConfiguration"]["LinkProfiles"]["LinkProfile"], nexus,pop,cust_code,tunnel_info)
                         except Exception as e:
                             print(e)
@@ -561,7 +564,7 @@ def main_starts_here() -> None:
 
                         # get domain-groups and scrub data
                         try:
-                            #print("Fetching and validating Domain Group for nexus {}".format(nexus))
+                            print("Fetching and validating Domain Group for nexus")
                             domain_groups = validate_domain_group(out_dict["ServerConfiguration"]["DomainGroups"]["DomainGroup"], nexus,pop,cust_code,tunnel_info,local_subnet,cust_id)
                         except Exception as e:
                             print(e)
