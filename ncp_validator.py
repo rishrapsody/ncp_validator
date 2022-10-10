@@ -204,7 +204,7 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                     lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
                 else:
                     lp_data.append(["LinkProfile", "RemoteUserId/VpnEndpoint", lp["RemoteUserId"],
-                                    "RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]), "PASSED"])
+                                    "RemoteUserId=VpnEndpoint=PopEdgeIP", "PASSED"])
             except Exception as e:
                 lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
 
