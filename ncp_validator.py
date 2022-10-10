@@ -60,11 +60,13 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
         cust_id = {}
         local_subnet = {}
         site_name = {}
+        pop_edge_ip = {}
         for nx_id in input:
             url = "{}/eagleeye/api/nexus/{}/info?nexus_id".format(user_data.ee_url,nx_id)
             response = requests.request("GET", url, headers=headers,verify=False,timeout=5).json()
             if response.get('arvpn_machine_id') !=  None and response['arvpn_machine_id'] != 0:
                 arvpn[nx_id] = response["arvpn_machine_id"]
+                pop_edge_ip[nx_id] =  response["pop_edge_ip"]
                 temp = []
                 if len(response["routeInfo"]["route"]["localSubnets"]) == 0:
                     local_subnet[nx_id] = Fore.RED+"None"+Fore.RESET
@@ -85,7 +87,7 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
             cust_code[nx_id] = response["customer_code"].lower()
             cust_id[nx_id] = response["customer_id"]
             site_name[nx_id] =  response["loc_name"]
-        return(arvpn,cust_code,cust_id,local_subnet,site_name)
+        return(arvpn,cust_code,cust_id,local_subnet,site_name,pop_edge_ip)
     except requests.exceptions.ConnectionError:
         errors_list.append("Either EE is unresponsive or nexus is not PrivateAccess. Please check")
         report_admin(func,e,errors_list)
@@ -149,7 +151,7 @@ def get_vpn_tunnel_status(input: List,cust_id: Dict) -> Dict:
 
 
 ## function to parse link profiles and validate config
-def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tunnel_info: Dict,private_edge_ip:str) -> List:
+def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tunnel_info: Dict,pop_edge_ip: Dict) -> List:
     #pprint(profiles)
     lp_data = []
     #print(nexus)
@@ -198,13 +200,13 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                 lp_data.append(["LinkProfile", "Timeout", "Not Configured", "0", Fore.RED+"FAILED"+Fore.RESET])
 
             try:
-                if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != private_edge_ip or lp["VpnTunnelEndpoint"] != private_edge_ip:
-                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
+                if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != pop_edge_ip[nexus] or lp["VpnTunnelEndpoint"] != pop_edge_ip[nexus]:
+                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
                 else:
                     lp_data.append(["LinkProfile", "RemoteUserId/VpnEndpoint", lp["RemoteUserId"],
-                                    "RemoteUserId=VpnEndpoint", "PASSED"])
+                                    "RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]), "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnEndpoint={}".format(private_edge_ip),Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if "asn" not in lp["IkePolicy"]:
@@ -495,7 +497,7 @@ def main_starts_here() -> None:
 
     #get arvpn_id to nexus mapping
         print("Getting ARVPN details using EE API....")
-        arvpn_dict,cust_code,cust_id,local_subnet,site_name = find_arvpnID_mapping(input)
+        arvpn_dict,cust_code,cust_id,local_subnet,site_name,pop_edge_ip = find_arvpnID_mapping(input)
 
     #get vpn tunnel status
         print("Checking IPSec Tunnel Status using EE API....")
@@ -549,16 +551,16 @@ def main_starts_here() -> None:
                 print("Logging into ARVPN server to read config....")
                 with ConnectHandler(**device) as net_connect:
                     try:
-                        ifconfig_output = net_connect.send_command("ifconfig bond0.16:pri122")
-                        ifconfig_data = jc.parse('ifconfig',ifconfig_output)
-                        private_edge_ip = ifconfig_data[0]['ipv4_addr']
+                        #ifconfig_output = net_connect.send_command("ifconfig bond0.16:pri122")
+                        #ifconfig_data = jc.parse('ifconfig',ifconfig_output)
+                        #private_edge_ip = ifconfig_data[0]['ipv4_addr']
                         output = net_connect.send_command("sudo cat /opt/ncp/ses/etc/cfg/srvlx.conf", read_timeout=10)
                         data = jc.parse('xml', output)
                         out_dict = dict(data)
                         pop = arvpn_server.split(".")[1]
                         try:
                             print("Fetching and validating Link Profile for nexus")
-                            link_profiles = validate_link_profile(out_dict["ServerConfiguration"]["LinkProfiles"]["LinkProfile"], nexus,pop,cust_code,tunnel_info,private_edge_ip)
+                            link_profiles = validate_link_profile(out_dict["ServerConfiguration"]["LinkProfiles"]["LinkProfile"], nexus,pop,cust_code,tunnel_info,pop_edge_ip)
                         except Exception as e:
                             print(e)
                             errors_list.append("unable to find matching Link Profiles on server {} for nexus {}".format(arvpn_server, nexus))
