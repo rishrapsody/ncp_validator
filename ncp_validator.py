@@ -15,6 +15,7 @@ from typing import List,Dict,Union
 import ipaddress
 import re
 import urllib3
+from ipaddress import ip_address
 urllib3.disable_warnings()
 
 ## script help content
@@ -200,10 +201,13 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                 lp_data.append(["LinkProfile", "Timeout", "Not Configured", "0", Fore.RED+"FAILED"+Fore.RESET])
 
             try:
-                if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != pop_edge_ip[nexus] or lp["VpnTunnelEndpoint"] != pop_edge_ip[nexus]:
-                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
+                if ip_address(pop_edge_ip[nexus]) != True:
+                    lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint=Pri_PopEdgeIP",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    lp_data.append(["LinkProfile", "RemoteUserId/VpnEndpoint", lp["RemoteUserId"],
+                    if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != pop_edge_ip[nexus] or lp["VpnTunnelEndpoint"] != pop_edge_ip[nexus]:
+                        lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
+                    else:
+                        lp_data.append(["LinkProfile", "RemoteUserId/VpnEndpoint", lp["RemoteUserId"],
                                     "RemoteUserId=VpnEndpoint=PopEdgeIP", "PASSED"])
             except Exception as e:
                 lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
