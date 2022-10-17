@@ -201,7 +201,7 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
                 lp_data.append(["LinkProfile", "Timeout", "Not Configured", "0", Fore.RED+"FAILED"+Fore.RESET])
 
             try:
-                if ip_address(pop_edge_ip[nexus]) != True:
+                if ip_address(pop_edge_ip[nexus]).is_private != True:
                     lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint",lp["RemoteUserId"],"RemoteUserId=VpnEndpoint=Pri_PopEdgeIP",Fore.RED+"FAILED"+Fore.RESET])
                 else:
                     if lp["RemoteUserId"] != lp["VpnTunnelEndpoint"] or lp["RemoteUserId"] != pop_edge_ip[nexus] or lp["VpnTunnelEndpoint"] != pop_edge_ip[nexus]:
