@@ -347,12 +347,12 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
                 dg_data.append(["DomainGroup","IKEv2AllowAuthEAP","Unable to find key","enabled",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
-                if dg["ServerCertificate"] != "IPsec2":
-                    dg_data.append(["DomainGroup","ServerCertificate",dg["ServerCertificate"],"IPsec2",Fore.RED+"FAILED"+Fore.RESET])
+                if dg["ServerCertificate"] != "IPsec":
+                    dg_data.append(["DomainGroup","ServerCertificate",dg["ServerCertificate"],"IPsec",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    dg_data.append(["DomainGroup", "ServerCertificate", dg["ServerCertificate"], "IPsec2", "PASSED"])
+                    dg_data.append(["DomainGroup", "ServerCertificate", dg["ServerCertificate"], "IPsec", "PASSED"])
             except Exception as e:
-                dg_data.append(["DomainGroup","ServerCertificate","Not Configured","IPsec2",Fore.RED+"FAILED"+Fore.RESET])
+                dg_data.append(["DomainGroup","ServerCertificate","Not Configured","IPsec",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if dg["RadiusState1"] != "enabled":
