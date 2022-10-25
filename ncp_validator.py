@@ -84,7 +84,7 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
 
             else:
                 errors_list.append("Unable to find arvpn server-id. Check if nexus {} is of type PrivateAccess. Nexus may be using older edge provider".format(nx_id))
-                exit("Unable to find arvpn server-id. \n->Check if nexus {} is of type PrivateAccess. \n->Nexus may be using older edge provider \n->Nexus is either not active or has no connexus".format(nx_id))
+                exit("\nUnable to find arvpn server-id. \n->Check if nexus {} is of type PrivateAccess. \n->Nexus may be using older edge provider \n->Nexus is either not active or has no connexus \n->EE API is not returning ARVPN Machine ID. Please re-try after sometime".format(nx_id))
             cust_code[nx_id] = response["customer_code"].lower()
             cust_id[nx_id] = response["customer_id"]
             site_name[nx_id] =  response["loc_name"]
