@@ -16,6 +16,7 @@ import ipaddress
 import re
 import urllib3
 from ipaddress import ip_address
+from server_mapping import server_mapping
 urllib3.disable_warnings()
 
 ## script help content
@@ -65,26 +66,32 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
         for nx_id in input:
             url = "{}/eagleeye/api/nexus/{}/info?nexus_id".format(user_data.ee_url,nx_id)
             response = requests.request("GET", url, headers=headers,verify=False,timeout=5).json()
+            pop_edge_ip[nx_id] =  response["pop_edge_ip"]
+            temp = []
+            if len(response["routeInfo"]["route"]["localSubnets"]) == 0:
+                local_subnet[nx_id] = Fore.RED+"None"+Fore.RESET
+            elif len(response["routeInfo"]["route"]["localSubnets"]) == 1:
+                subnet = response["routeInfo"]["route"]["localSubnets"][0]["ip"] + "/" + response["routeInfo"]["route"]["localSubnets"][0]["mask"]
+                temp.append(subnet)
+                local_subnet[nx_id] = temp
+            else:
+                
+                for i in range(len(response["routeInfo"]["route"]["localSubnets"])):
+                    subnet = response["routeInfo"]["route"]["localSubnets"][i]["ip"] + "/" + response["routeInfo"]["route"]["localSubnets"][i]["mask"]
+                    temp.append(subnet)
+                local_subnet[nx_id] = temp
             if response.get('arvpn_machine_id') !=  None and response['arvpn_machine_id'] != 0:
                 arvpn[nx_id] = response["arvpn_machine_id"]
-                pop_edge_ip[nx_id] =  response["pop_edge_ip"]
-                temp = []
-                if len(response["routeInfo"]["route"]["localSubnets"]) == 0:
-                    local_subnet[nx_id] = Fore.RED+"None"+Fore.RESET
-                elif len(response["routeInfo"]["route"]["localSubnets"]) == 1:
-                    subnet = response["routeInfo"]["route"]["localSubnets"][0]["ip"] + "/" + response["routeInfo"]["route"]["localSubnets"][0]["mask"]
-                    temp.append(subnet)
-                    local_subnet[nx_id] = temp
-                else:
-                    
-                    for i in range(len(response["routeInfo"]["route"]["localSubnets"])):
-                        subnet = response["routeInfo"]["route"]["localSubnets"][i]["ip"] + "/" + response["routeInfo"]["route"]["localSubnets"][i]["mask"]
-                        temp.append(subnet)
-                    local_subnet[nx_id] = temp
-
             else:
-                errors_list.append("Unable to find arvpn server-id. Check if nexus {} is of type PrivateAccess. Nexus may be using older edge provider".format(nx_id))
-                exit("\nUnable to find arvpn server-id. \n->Check if nexus {} is of type PrivateAccess. \n->Nexus may be using older edge provider \n->Nexus is either not active or has no connexus \n->EE API is not returning ARVPN Machine ID. Please re-try after sometime".format(nx_id))
+                print("Unable to find arvpn server from API response. Switching to backup static mapping....")
+                #print(server_mapping[response["cust_ip"]])
+                arvpn[nx_id] = server_mapping[response["cust_ip"]] + "." + response["pop_code"].lower()
+                #print(arvpn[nx_id])
+
+
+            #else:
+            #    errors_list.append("Unable to find arvpn server-id. Check if nexus {} is of type PrivateAccess. Nexus may be using older edge provider".format(nx_id))
+            #    exit("\nUnable to find arvpn server-id. \n->Check if nexus {} is of type PrivateAccess. \n->Nexus may be using older edge provider \n->Nexus is either not active or has no connexus \n->EE API is not returning ARVPN Machine ID. Please re-try after sometime".format(nx_id))
             cust_code[nx_id] = response["customer_code"].lower()
             cust_id[nx_id] = response["customer_id"]
             site_name[nx_id] =  response["loc_name"]
@@ -100,7 +107,8 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
         errors_list.append("Either EE is unresponsive or nexus is not PrivateAccess. Please check")
         func = "find_arvpnID_mapping"
         report_admin(func,e,errors_list)
-        exit("Landed into exception while executing EE Nexus API.\n->Unable to find arvpn server for input nx: {}\n->EE API might be unresponsive. Check with Admin".format(nx_id))
+        #exit("Landed into exception while executing EE Nexus API.\n->Unable to find arvpn server for input nx: {}\n->EE API might be unresponsive. Check with Admin".format(nx_id))
+        exit("\nUnable to find arvpn server-id. \n->Check if nexus {} is of type PrivateAccess. \n->Nexus may be using older edge provider \n->Nexus is either not active or has no connexus \n->EE API is not returning ARVPN Machine ID. Please re-try after sometime".format(nx_id))
 
 
 ## function to get arvpn server hostname for each arvpnID. Returns nexus to server hostname mapping
@@ -108,11 +116,14 @@ def find_arvpn_server(arvpn_dict: Dict) -> Dict:
     try:
         temp_dict = {}
         for k,v in arvpn_dict.items():
-            headers = {'Content-Type': 'application/json'}
-            url = "{}/eagleeye/command/run".format(user_data.ee_url)
-            payload = json.dumps({"commandName":"uname -a","entityType":"mach","entityId":[v],"roles":["arvpn"],"blocking":"true"})
-            response = requests.request("GET", url, headers=headers, data=payload,verify=False,timeout=5).json()
-            temp_dict[k] = response["batch"]["exec"][0]["hostName"]
+            if not str(v).startswith("server"):
+                headers = {'Content-Type': 'application/json'}
+                url = "{}/eagleeye/command/run".format(user_data.ee_url)
+                payload = json.dumps({"commandName":"uname -a","entityType":"mach","entityId":[v],"roles":["arvpn"],"blocking":"true"})
+                response = requests.request("GET", url, headers=headers, data=payload,verify=False,timeout=5).json()
+                temp_dict[k] = response["batch"]["exec"][0]["hostName"]
+            else:
+                temp_dict[k] = v
         return(temp_dict)
     except requests.exceptions.ConnectionError:
         exit("Unable to establish connection with API server. Check if your VPN is UP\n")
