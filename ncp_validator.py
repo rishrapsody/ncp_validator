@@ -96,13 +96,18 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
             cust_id[nx_id] = response["customer_id"]
             site_name[nx_id] =  response["loc_name"]
         return(arvpn,cust_code,cust_id,local_subnet,site_name,pop_edge_ip)
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.ConnectionError as e:
         errors_list.append("Either EE is unresponsive or nexus is not PrivateAccess. Please check")
         func = "find_arvpnID_mapping"
         report_admin(func,e,errors_list)
         exit("Unable to establish connection with EE API server. Check if your VPN is UP and EE is accessible.\nInform Admin if the problem persists for longer time.")
     except requests.exceptions.Timeout as e:
         print ("Timeout Error:",e) 
+    except ConnectionRefusedError as e:
+        errors_list.append("Either EE is unresponsive or your VPN is Down. Please check")
+        func = "find_arvpnID_mapping"
+        report_admin(func,e,errors_list)
+        exit("Unable to establish connection with EE API server. Check if your VPN is UP and EE is accessible.\nInform Admin if the problem persists for longer time.")
     except Exception as e:
         print(e)
         errors_list.append("Either EE is unresponsive or nexus is not PrivateAccess. Please check")
