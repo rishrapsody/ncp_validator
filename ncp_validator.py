@@ -98,6 +98,7 @@ def find_arvpnID_mapping(input: List) -> Union[Dict,Dict,Dict,Dict,Dict]:
         return(arvpn,cust_code,cust_id,local_subnet,site_name,pop_edge_ip)
     except requests.exceptions.ConnectionError:
         errors_list.append("Either EE is unresponsive or nexus is not PrivateAccess. Please check")
+        func = "find_arvpnID_mapping"
         report_admin(func,e,errors_list)
         exit("Unable to establish connection with EE API server. Check if your VPN is UP and EE is accessible.\nInform Admin if the problem persists for longer time.")
     except requests.exceptions.Timeout as e:
