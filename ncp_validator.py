@@ -229,21 +229,33 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
             except Exception as e:
                 lp_data.append(["LinkProfile","RemoteUserId/VpnEndpoint","Not Configured","RemoteUserId=VpnEndpoint={}".format(pop_edge_ip[nexus]),Fore.RED+"FAILED"+Fore.RESET])
 
-            try:
-                if "asn" not in lp["IkePolicy"]:
-                    lp_data.append(["LinkProfile","IkePolicy",lp["IkePolicy"],"ike-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
-                else:
-                    lp_data.append(["LinkProfile", "IkePolicy", lp["IkePolicy"], "ike-policy-asn-default", "PASSED"])
-            except Exception as e:
-                lp_data.append(["LinkProfile","IkePolicy","Not Set or Configured at Template","ike-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+            # try:
+            #     if "asn" not in lp["IkePolicy"]:
+            #         lp_data.append(["LinkProfile","IkePolicy",lp["IkePolicy"],"ike-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+            #     else:
+            #         lp_data.append(["LinkProfile", "IkePolicy", lp["IkePolicy"], "ike-policy-asn-default", "PASSED"])
+            # except Exception as e:
+            #     lp_data.append(["LinkProfile","IkePolicy","Not Set or Configured at Template","ike-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
 
+            # try:
+            #     if "asn" not in lp["IPSecPolicy"]:
+            #         lp_data.append(["LinkProfile","IPSecPolicy",lp["IPSecPolicy"],"ipsec-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+            #     else:
+            #         lp_data.append(["LinkProfile", "IPSecPolicy", lp["IPSecPolicy"], "ipsec-policy-asn-default", "PASSED"])
+            # except Exception as e:
+            #     lp_data.append(["LinkProfile","IPSecPolicy","Not Set or Configured at Template","ipsec-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+
+            #ike-policy
             try:
-                if "asn" not in lp["IPSecPolicy"]:
-                    lp_data.append(["LinkProfile","IPSecPolicy",lp["IPSecPolicy"],"ipsec-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+                if "IkeV2Policy" not in lp.keys():
+                    lp_data.append(["LinkProfile","IkeV2Policy","Not Configured","ikev2-policy",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    lp_data.append(["LinkProfile", "IPSecPolicy", lp["IPSecPolicy"], "ipsec-policy-asn-default", "PASSED"])
+                    if "ikev2-policy" in lp["IkeV2Policy"]:
+                        lp_data.append(["LinkProfile", "IkeV2Policy", lp["IkeV2Policy"], "ikev2-policy", "PASSED"])
+                    else:
+                        lp_data.append(["LinkProfile","IkeV2Policy",lp["IkeV2Policy"],"ikev2-policy",Fore.RED+"FAILED"+Fore.RESET])
             except Exception as e:
-                lp_data.append(["LinkProfile","IPSecPolicy","Not Set or Configured at Template","ipsec-policy-asn-default",Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","IkeV2Policy","Unable to find","ikev2-policy",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
                 if lp["PrivateIpAddress"] != "255.255.255.255":
@@ -254,13 +266,22 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
             except Exception as e:
                 lp_data.append(["LinkProfile","PrivateIpAddress","Not Configured","255.255.255.255",Fore.RED+"FAILED"+Fore.RESET])
 
+            # try:
+            #     if lp["ExchangeMode"] != "main":
+            #         lp_data.append(["LinkProfile","ExchangeMode",lp["ExchangeMode"],"main",Fore.RED+"FAILED"+Fore.RESET])
+            #     else:
+            #         lp_data.append(["LinkProfile", "ExchangeMode", lp["ExchangeMode"], "main", "PASSED"])
+            # except Exception as e:
+            #     lp_data.append(["LinkProfile","ExchangeMode","Not Configured","main",Fore.RED+"FAILED"+Fore.RESET])
+
+            #ikev2
             try:
-                if lp["ExchangeMode"] != "main":
-                    lp_data.append(["LinkProfile","ExchangeMode",lp["ExchangeMode"],"main",Fore.RED+"FAILED"+Fore.RESET])
+                if lp["ExchangeMode"] != "IKEv2":
+                    lp_data.append(["LinkProfile","ExchangeMode",lp["ExchangeMode"],"IKEv2",Fore.RED+"FAILED"+Fore.RESET])
                 else:
-                    lp_data.append(["LinkProfile", "ExchangeMode", lp["ExchangeMode"], "main", "PASSED"])
+                    lp_data.append(["LinkProfile", "ExchangeMode", lp["ExchangeMode"], "IKEv2", "PASSED"])
             except Exception as e:
-                lp_data.append(["LinkProfile","ExchangeMode","Not Configured","main",Fore.RED+"FAILED"+Fore.RESET])
+                lp_data.append(["LinkProfile","ExchangeMode","Not Configured","IKEv2",Fore.RED+"FAILED"+Fore.RESET])
 
     return(lp_data)
 
