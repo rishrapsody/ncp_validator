@@ -283,6 +283,17 @@ def validate_link_profile(profiles: Dict,nexus: str,pop: str,cust_code: Dict,tun
             except Exception as e:
                 lp_data.append(["LinkProfile","ExchangeMode","Not Configured","IKEv2",Fore.RED+"FAILED"+Fore.RESET])
 
+            try:
+                if "IkeV2Auth" not in lp.keys():
+                    lp_data.append(["LinkProfile","IkeV2Auth","Not Configured","PSK",Fore.RED+"FAILED"+Fore.RESET])
+                else:
+                    if lp["IkeV2Auth"] == "PSK":
+                        lp_data.append(["LinkProfile", "IkeV2Auth", lp["IkeV2Auth"], "PSK", "PASSED"])
+                    else:
+                        lp_data.append(["LinkProfile","IkeV2Auth",lp["IkeV2Auth"],"PSK",Fore.RED+"FAILED"+Fore.RESET])
+            except Exception as e:
+                lp_data.append(["LinkProfile","IkeV2Auth","Not Configured","PSK",Fore.RED+"FAILED"+Fore.RESET])
+
     return(lp_data)
 
 ## function to parse domain groups and validate config
