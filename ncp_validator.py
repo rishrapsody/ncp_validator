@@ -347,6 +347,13 @@ def validate_domain_group(groups: Dict,nexus: str,pop: str,cust_code: Dict,tunne
                 dg_data.append(["DomainGroup","Suffix","Not Configured","Should not be empty",Fore.RED+"FAILED"+Fore.RESET])
 
             try:
+                if "DomainSearchOrder" in dg.keys():
+                    dg_data.append(["DomainGroup", "DSSO", dg["DomainSearchOrder"], "NA","NA"])
+            except Exception as e:
+                dg_data.append(["DomainGroup", "DSSO", "Unable to Parse", "NA",Fore.RED + "FAILED" + Fore.RESET])
+
+
+            try:
                 if dg["DNS1"] == "" and dg["DNS2"] == "":
                     dg_data.append(["DomainGroup","DNS","","Atleast one should be configured",Fore.RED+"FAILED"+Fore.RESET])
                 else:
